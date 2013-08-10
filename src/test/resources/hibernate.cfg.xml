@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<!--
+http://docs.jboss.org/hibernate/orm/3.3/reference/en-US/html/session-configuration.html
+http://jolbox.com/index.html?page=http://jolbox.com/configuration-hibernate.html
+http://docs.jboss.org/hibernate/orm/4.1/devguide/en-US/html/ch01.html#d5e154
+-->
+
+<hibernate-configuration>
+
+    <!-- a SessionFactory instance listed as /jndi/name -->
+    <session-factory>
+        <!-- Database connection settings -->
+
+        <!--Option 1:  Default Connection Pool Setting -->
+        <!--<property name="connection.driver_class">com.mysql.jdbc.Driver</property>-->
+        <!--<property name="connection.url">jdbc:mysql://localhost:3306/playjpa</property>-->
+        <!--<property name="connection.username">jerry</property>-->
+        <!--<property name="connection.password">jerry</property>-->
+
+        <!-- JDBC connection pool (use the built-in) -->
+        <!--<property name="connection.pool_size">1</property>-->
+
+        <!--Option 2:  Using DataSource-->
+        <property name="connection.datasource">db.playjpa</property>
+
+        <!--Option 3:  Creating BoneCP Connection Pool-->
+        <!--<property name="connection.driver_class">com.mysql.jdbc.Driver</property>-->
+        <!--<property name="connection.url">jdbc:mysql://localhost:3306/playjpa</property>-->
+        <!--<property name="connection.username">jerry</property>-->
+        <!--<property name="connection.password">jerry</property>-->
+
+        <!--<property name="connection.provider_class">com.jolbox.bonecp.provider.BoneCPConnectionProvider</property>-->
+        <!--<property name="bonecp.idleMaxAge">240</property>-->
+        <!--<property name="bonecp.idleConnectionTestPeriod">60</property>-->
+        <!--<property name="bonecp.partitionCount">3</property>-->
+        <!--<property name="bonecp.acquireIncrement">10</property>-->
+        <!--<property name="bonecp.maxConnectionsPerPartition">60</property>-->
+        <!--<property name="bonecp.minConnectionsPerPartition">20</property>-->
+        <!--<property name="bonecp.statementsCacheSize">50</property>-->
+        <!--<property name="bonecp.releaseHelperThreads">3</property>-->
+
+
+        <!-- SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property>
+
+        <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">true</property>
+
+        <!-- Entity Mappings -->
+        <mapping class="models.entity.OrderLog"/>
+        <mapping class="models.entity.OrderItem"/>
+
+    </session-factory>
+
+</hibernate-configuration>

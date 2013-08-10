@@ -1,0 +1,14 @@
+# Extracted from https://github.com/ulrich/macaron-factory/blob/master/.gitignore
+# Ignore all dotfiles...
+.*
+# except for .gitignore
+!.gitignore
+
+
+_mb
+.DS_Store
+.idea
+.idea_modules
+target
+project/target
+myApp.log
