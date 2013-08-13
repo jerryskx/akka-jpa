@@ -38,5 +38,6 @@ object HB extends utils.logging.Logger {
       try{sf.close()}
       catch{case e:Throwable => error("Failed to close SessionFactory " + sf, e)}
     })
+    sessionFactories.clear()
   }
 }

@@ -17,6 +17,9 @@ class JpaSpec  extends Specification {
 
   val jpaService = JPA("playjpaPersistenceUnit")
   val TEST_USER_FIRST_NAME = "Tom"
+  val TEST_UPD_ADDR = "TEST UPDATE addr1 2"
+
+  var ordId:Int = _
 
   step {
 //    println("startup in jpa test")
@@ -70,13 +73,18 @@ class JpaSpec  extends Specification {
       ord1.addItem(OrderItem("123123123", 20.99f))
       jpaService.persist(ord1)
 
+//      sleep()
+      ordId = ord1.id
+//      println("ordId is " + ordId)
+//      jpaService.find[OrderLog](ordId) must beSome[OrderLog]
       findCustomer(ord1.id) must beTrue
     }
 
     "be able to update entity" in {
       println("update")
       import scala.collection.JavaConversions._
-      val ord = jpaService.querySingleResult[OrderLog]("from OrderLog as o where o.shiptoFirstName = :firstname", ("firstname" -> TEST_USER_FIRST_NAME))
+//      val ord = jpaService.querySingleResult[OrderLog]("from OrderLog as o where o.shiptoFirstName = :firstname", ("firstname" -> TEST_USER_FIRST_NAME))
+      val ord = jpaService.find[OrderLog](ordId)
       ord must beSome[OrderLog]
       ord.map(ord => {
         ord.shiptoAddress1 = "TEST UPDATE addr1 2"
@@ -84,29 +92,38 @@ class JpaSpec  extends Specification {
         jpaService.merge(ord)
       })
 
-      jpaService.find[OrderLog](ord.get.id) must beSome[OrderLog].which(newOrd =>
+//      sleep()
+      jpaService.find[OrderLog](ordId) must beSome[OrderLog].which(newOrd => {
+        newOrd.shiptoAddress1 must be_==(TEST_UPD_ADDR)
         newOrd.orderItems.forall(_.price == 21.99f) must beTrue
-      )
+      })
     }
 
     "be able to delete entity" in {
       println("delete")
-      var ord1 =  jpaService.querySingleResult[OrderLog]("from OrderLog as o where o.shiptoFirstName = :firstname", ("firstname" -> TEST_USER_FIRST_NAME))
-      ord1 must beSome[OrderLog]
-      jpaService.remove(ord1.get)
+//      var ord2 =  jpaService.querySingleResult[OrderLog]("from OrderLog as o where o.shiptoFirstName = :firstname", ("firstname" -> TEST_USER_FIRST_NAME))
+      var ord2 = jpaService.find[OrderLog](ordId)
+      println(ord2)
+      sleep()
 
-      findCustomer(ord1.get.id) must beFalse
+      ord2 must beSome[OrderLog]
+      jpaService.remove(ord2.get)
+
+//      sleep()
+      findCustomer(ord2.get.id) must beFalse
     }
   }
 
   step {
 
+    println("Clean up test data")
     // clean up test data
     jpaService.query[OrderLog]("from OrderLog as o where o.shiptoFirstName =:firstname ", ("firstname" -> TEST_USER_FIRST_NAME))
       .foreach(order=>jpaService.remove(order))
 
+    println("release all resources")
+    akka.jpa.JpaActorSystem.shutdown()
     utils.orm.JPA.shutdown()
-    akka.jpa.JpaActorSystem.system.shutdown()
     DB.shutdown()
   }
 

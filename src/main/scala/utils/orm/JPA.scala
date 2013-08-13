@@ -31,5 +31,6 @@ object JPA extends utils.logging.Logger {
       try{emf.close()}
       catch{case e:Throwable => error("Failed to close EntityManagerFactory " + emf, e)}
     })
+    emfMap.clear()
   }
 }

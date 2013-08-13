@@ -9,6 +9,7 @@ import javax.persistence.EntityManager
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import akka.actor.ActorRef
+import utils.ConfUtil
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,6 +21,8 @@ import akka.actor.ActorRef
 
 object JPA {
   val jpaMap = mutable.Map[String, JPA]()    // JPA Service Map
+  val TIMEOUT = ConfUtil.confInt("akkajpa.timeout").getOrElse(30)
+
   def apply():JPA = apply("default")
   def apply(persistenceUnit:String):JPA = {
     jpaMap.get(persistenceUnit).getOrElse({
@@ -30,7 +33,7 @@ object JPA {
   }
 }
 class JPA(persistenceUnit:String) {
-  implicit lazy val dur = 30 seconds
+  implicit lazy val dur = JPA.TIMEOUT seconds
   implicit lazy val timeout = Timeout(dur)
   val jpaSupervisor: ActorRef = JpaActorSystem(persistenceUnit)
 

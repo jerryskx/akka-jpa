@@ -40,6 +40,10 @@ object JpaActorSystem extends utils.logging.Logger {
       supervisor
     })
   }
+  def shutdown() = {
+    system.shutdown()
+    supervisors.clear()
+  }
 }
 
 case class Create(obj: AnyRef)
